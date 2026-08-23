@@ -1,0 +1,6 @@
+[tools]
+dotnet = "9"
+ffmpeg = "latest"
+
+[tasks.install-assets]
+run = "pwsh -NoProfile -File ./Scripts/Install-Assets.ps1"
