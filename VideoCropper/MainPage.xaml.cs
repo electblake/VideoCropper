@@ -37,7 +37,7 @@ namespace VideoCropper
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await e.DataView.GetStorageItemsAsync();
-                GoToCropper(items[0].Path);
+                GoToCropper(items.Select(item => item.Path).ToList());
             }
         }
 
@@ -57,11 +57,11 @@ namespace VideoCropper
             }
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(MainWindow.Window);
             WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
-            var file = await filePicker.PickSingleFileAsync();
-            GoToCropper(file.Path);
+            var files = await filePicker.PickMultipleFilesAsync();
+            GoToCropper(files.Select(file => file.Path).ToList());
         }
 
-        private async void GoToCropper(string videoPath)
+        private async void GoToCropper(List<string> videoPaths)
         {
             var ffmpegPath = string.Empty;
             try
@@ -77,7 +77,7 @@ namespace VideoCropper
                 await ErrorDialog.ShowAsync();
                 return;
             }
-            Frame.Navigate(typeof(VideoCropperPage), new CropperProps { FfmpegPath = ffmpegPath, VideoPath = videoPath, TypeToNavigateTo = typeof(MainPage).FullName});
+            Frame.Navigate(typeof(VideoCropperPage), new CropperProps { FfmpegPath = ffmpegPath, VideoPaths = videoPaths, TypeToNavigateTo = typeof(MainPage).FullName});
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)

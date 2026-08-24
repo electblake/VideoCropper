@@ -13,5 +13,24 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Frame x:Name="WindowFrame"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <MenuBar>
+            <MenuBarItem Title="File" AccessKey="F">
+                <MenuFlyoutItem Text="Open Video..." AccessKey="O" Click="OpenVideo_Click">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="O" Modifiers="Control"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="Open App Data Folder" Click="OpenAppDataFolder_Click"/>
+                <MenuFlyoutItem Text="Open Logs Folder" Click="OpenLogsFolder_Click"/>
+            </MenuBarItem>
+        </MenuBar>
+
+        <Frame x:Name="WindowFrame" Grid.Row="1"/>
+    </Grid>
 </Window>

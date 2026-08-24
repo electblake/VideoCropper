@@ -26,6 +26,11 @@ namespace VideoCropper
     /// </summary>
     public partial class App : Application
     {
+        private static readonly string CrashLogFolder = System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "ReelBox",
+            "Crop");
+        private static readonly string CrashLogPath = System.IO.Path.Combine(CrashLogFolder, "crashes.log");
         private Window? _window;
 
         /// <summary>
@@ -34,7 +39,17 @@ namespace VideoCropper
         /// </summary>
         public App()
         {
+            Directory.CreateDirectory(CrashLogFolder);
+            UnhandledException += (_, args) => LogCrash(args.Exception);
+            AppDomain.CurrentDomain.UnhandledException += (_, args) => LogCrash(args.ExceptionObject);
             InitializeComponent();
+        }
+
+        private static void LogCrash(object exception)
+        {
+            File.AppendAllText(
+                CrashLogPath,
+                $"{DateTimeOffset.Now:O}{Environment.NewLine}{exception}{Environment.NewLine}{Environment.NewLine}");
         }
 
         /// <summary>
