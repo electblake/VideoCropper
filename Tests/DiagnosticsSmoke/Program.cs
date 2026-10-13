@@ -43,11 +43,22 @@ store["Crop.LockAspectRatio"] = true;
 store["Crop.XPercent"] = 12.5;
 store["HardwareAcceleration.GpuIndex"] = 2;
 store.SetWindowSize(1400, 900);
+store.SetCropState(12.5, 20, 50, 60, 3, "16:9", false);
 var restored = new SettingsStore(settingsPath, _ => { });
 Check(!(bool)restored["Crop.PreviewWhileProcessing"]!, "preview preference persists when disabled");
 Check((string)restored["Crop.AspectRatioPreset"]! == "16:9", "string persistence");
 Check((bool)restored["Crop.LockAspectRatio"]!, "boolean persistence");
 Check((double)restored["Crop.XPercent"]! == 12.5, "fraction persistence");
+Check((double)restored["Crop.YPercent"]! == 20 &&
+      (double)restored["Crop.WidthPercent"]! == 50 &&
+      (double)restored["Crop.HeightPercent"]! == 60 &&
+      (int)restored["Crop.QuarterTurns"]! == 3 &&
+      !(bool)restored["Crop.CenterPreset"]!, "crop geometry and rotation restore together");
+store.SetCropState(12.5, 20, 50, 60, 0, null, true);
+var customCrop = new SettingsStore(settingsPath, _ => { });
+Check(!customCrop.ContainsKey("Crop.AspectRatioPreset") &&
+      (int)customCrop["Crop.QuarterTurns"]! == 0 &&
+      (bool)customCrop["Crop.CenterPreset"]!, "custom crop clears preset and persists rotation reset and centering");
 Check((int)restored["HardwareAcceleration.GpuIndex"]! == 2, "integer persistence");
 Check((int)restored["MainWindow.Width"]! == 1400 && (int)restored["MainWindow.Height"]! == 900, "window persistence");
 store.Remove("Crop.AspectRatioPreset");

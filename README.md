@@ -47,6 +47,20 @@ Click the **Go back** button to return to the file selection page.
 
 ## Settings and diagnostics
 
+The cropper restores the last rotation, crop position and size, aspect-ratio preset,
+aspect-ratio lock, centering, zoom-into-frame, mouse-wheel zoom, pixel-aspect
+normalization, processing preview, auto-advance, and hardware selection on the next
+load. Crop position and size are saved as percentages of the rotated video canvas;
+a selected aspect-ratio preset is reapplied when the next video's proportions differ.
+These preferences apply across videos and app sessions.
+
+**Load next** opens the next video after a successful crop. **Quit when done**
+shows a 30-second countdown after a successful crop when the current video is the
+last in the list (including a single video), or when **Load next** is off. Choose
+**Quit now** to close immediately or **Cancel** to stay in the app. Canceling the
+dialog leaves the preference enabled for later crops. Failed or canceled crops
+do not start the countdown. Both checkbox preferences are saved between sessions.
+
 The app resolves the current user's Windows roaming application-data folder using
 `Environment.SpecialFolder.ApplicationData` and stores its data under `VideoCropper`
 (normally `%APPDATA%\VideoCropper`). It uses this store for both packaged and unpackaged

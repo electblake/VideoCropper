@@ -58,6 +58,23 @@ internal sealed class SettingsStore
         }
     }
 
+    public void SetCropState(double x, double y, double width, double height,
+        int quarterTurns, string? aspectRatio, bool centered)
+    {
+        lock (gate)
+        {
+            values["Crop.XPercent"] = x;
+            values["Crop.YPercent"] = y;
+            values["Crop.WidthPercent"] = width;
+            values["Crop.HeightPercent"] = height;
+            values["Crop.QuarterTurns"] = quarterTurns;
+            values["Crop.CenterPreset"] = centered;
+            if (aspectRatio == null) values.Remove("Crop.AspectRatioPreset");
+            else values["Crop.AspectRatioPreset"] = aspectRatio;
+            Save();
+        }
+    }
+
     public void Remove(string key)
     {
         lock (gate)

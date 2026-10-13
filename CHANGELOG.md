@@ -12,6 +12,24 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ## [Unreleased]
 
+### Added
+
+- Added rotate-left and rotate-right controls above the aspect-ratio options, rotating the preview and crop selection, swapping matching aspect-ratio presets, and rotating encoded frames before cropping.
+- Added saved rotation and crop width/height alongside crop position, with geometry stored as percentages of the rotated canvas.
+- Added a saved “Quit when done” option with a 30-second countdown, Quit now, and Cancel after a successful crop of the last video or when Load next is disabled.
+- Added settings round-trip checks for crop geometry, rotation, preset clearing, and centering.
+
+### Changed
+
+- Renamed “Load next video after cropping” to “Load next” without changing its behavior.
+- Saved crop geometry, rotation, preset, and centering together in one settings update.
+
+### Fixed
+
+- Prevented intermediate layout callbacks from overwriting crop settings during restoration.
+- Restored crop dimensions and rotation on subsequent video loads and app sessions.
+- Allowed the Center Frame toggle to be switched off and saved that state.
+
 ## [2.2.0] - 2026-10-13
 
 ### Added
