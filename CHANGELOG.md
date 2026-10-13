@@ -14,6 +14,8 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ### Added
 
+- Added `mise run watch` using the .NET SDK's built-in watcher to rebuild and restart on C#, XAML, and manifest changes; kept `mise run dev` as a single build-and-run.
+- Added a Reset button after Rotate right to restore zero rotation while rotating the crop selection back with the video and saving the result.
 - Added rotate-left and rotate-right controls above the aspect-ratio options, rotating the preview and crop selection, swapping matching aspect-ratio presets, and rotating encoded frames before cropping.
 - Added saved rotation and crop width/height alongside crop position, with geometry stored as percentages of the rotated canvas.
 - Added a saved “Quit when done” option with a 30-second countdown, Quit now, and Cancel after a successful crop of the last video or when Load next is disabled.
@@ -21,11 +23,17 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ### Changed
 
+- Enabled warnings-as-errors and updated nullable annotations, typed settings reads, and shared-component initialization.
+- Debounced preview fitting, crop-frame rebuilding, and window-size persistence until resizing has paused for 500 ms; applied the final resize fit without animation.
 - Renamed “Load next video after cropping” to “Load next” without changing its behavior.
 - Saved crop geometry, rotation, preset, and centering together in one settings update.
 
 ### Fixed
 
+- Copied FFmpeg binaries as runtime files instead of WinUI resources.
+- Closed the attached cancellation flyout directly instead of traversing its visual parents.
+- Corrected `mise run watch` argument forwarding so rebuilds use the unpackaged x64 configuration instead of AnyCPU MSIX packaging.
+- Applied rotation-button enabled states to the buttons instead of their StackPanel, fixing the XAML compilation failure.
 - Prevented intermediate layout callbacks from overwriting crop settings during restoration.
 - Restored crop dimensions and rotation on subsequent video loads and app sessions.
 - Allowed the Center Frame toggle to be switched off and saved that state.

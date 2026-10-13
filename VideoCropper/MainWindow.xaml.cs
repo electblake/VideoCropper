@@ -31,8 +31,10 @@ namespace VideoCropper
     {
         private const string WindowWidthSetting = "MainWindow.Width";
         private const string WindowHeightSetting = "MainWindow.Height";
+        private readonly DispatcherTimer resizeSettingsTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
 
-        public static Window Window;
+        // Assigned when the WinUI window is constructed, before picker events can run.
+        public static Window Window { get; private set; } = null!;
         public MainWindow()
         {
             InitializeComponent();
@@ -44,8 +46,8 @@ namespace VideoCropper
             if (settings.ContainsKey(WindowWidthSetting))
             {
                 AppWindow.Resize(new SizeInt32(
-                    (int)settings[WindowWidthSetting],
-                    (int)settings[WindowHeightSetting]));
+                    settings.Get<int>(WindowWidthSetting),
+                    settings.Get<int>(WindowHeightSetting)));
             }
             else
             {
@@ -55,16 +57,26 @@ namespace VideoCropper
             AppWindow.SetTitleBarIcon("Assets/EncircledPIERound.ico");
             WindowFrame.Navigate(typeof(MainPage));
             AppWindow.Closing += MainWindow_Closing;
+            resizeSettingsTimer.Tick += (_, _) =>
+            {
+                resizeSettingsTimer.Stop();
+                if (AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Restored })
+                    App.Settings.SetWindowSize(AppWindow.Size.Width, AppWindow.Size.Height);
+            };
             AppWindow.Changed += (_, args) =>
             {
                 if (args.DidSizeChange &&
                     AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Restored })
-                    App.Settings.SetWindowSize(AppWindow.Size.Width, AppWindow.Size.Height);
+                {
+                    resizeSettingsTimer.Stop();
+                    resizeSettingsTimer.Start();
+                }
             };
         }
 
         private void MainWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
         {
+            resizeSettingsTimer.Stop();
             if (sender.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Restored })
                 App.Settings.SetWindowSize(sender.Size.Width, sender.Size.Height);
             App.Diagnostics.Log("Main window closing");

@@ -14,9 +14,15 @@ When that completes, go to `\bin\Release\net<version>-windows\win-x64` and you'l
 
 ## Development
 
-Run `mise run dev` to build the current source and launch the app in unpackaged x64
-Debug mode using `dotnet run`. Close the running app before invoking it again so
-the build can replace its executable. Build failures stop the launch.
+Run `mise run dev` to build and launch the app once in unpackaged x64 Debug mode
+using `dotnet run`.
+
+Run `mise run watch` for automatic rebuilding with the .NET SDK's built-in
+`dotnet watch`. Saving C# or XAML files (including shared
+components), the project file, or the package manifest rebuilds and restarts the app.
+This uses full restarts, not in-place Hot Reload; a restart interrupts active crops.
+Close any separately launched instance before starting the task. Press Ctrl+C to
+stop watching. Build failures prevent the updated app from launching.
 
 ## Run without building
 You can also just download the release builds if you don't wish to build manually. Unfortunately packages created in WinUI 3 have to be signed with a certificate, and certificates sourced from trusted companies cost hundreds of dollars. If you wish to install the package, you'll have to install a certificate signed by myself, as described [here](https://github.com/PeteJobi/VideoCropper/releases/tag/cert). You only need to do this once - future updates will not require different certificates.
@@ -53,6 +59,10 @@ normalization, processing preview, auto-advance, and hardware selection on the n
 load. Crop position and size are saved as percentages of the rotated video canvas;
 a selected aspect-ratio preset is reapplied when the next video's proportions differ.
 These preferences apply across videos and app sessions.
+
+Window resizing waits for a 500 ms pause before refitting the preview and rebuilding
+the crop frame when needed. The final fit is applied without an additional animation.
+Window-size settings are saved after the same delay and again when the app closes.
 
 **Load next** opens the next video after a successful crop. **Quit when done**
 shows a 30-second countdown after a successful crop when the current video is the

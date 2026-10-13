@@ -35,6 +35,11 @@ internal sealed class SettingsStore
         lock (gate) return values.ContainsKey(key);
     }
 
+    public T Get<T>(string key)
+    {
+        lock (gate) return values[key]!.GetValue<T>();
+    }
+
     public JsonNode? this[string key]
     {
         get { lock (gate) return values[key]; }

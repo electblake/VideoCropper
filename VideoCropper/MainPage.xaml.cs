@@ -26,7 +26,6 @@ namespace VideoCropper
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private string ffmpegLocation;
         public MainPage()
         {
             InitializeComponent();
@@ -70,7 +69,7 @@ namespace VideoCropper
             Frame.Navigate(typeof(VideoCropperPage), new CropperProps { FfmpegPath = ffmpegPath, VideoPaths = videoPaths, TypeToNavigateTo = typeof(MainPage).FullName});
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is string outputFile)
             {

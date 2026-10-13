@@ -11,6 +11,7 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <Target Name="ReadManifestVersion" BeforeTargets="GetAssemblyVersion">
     <XmlPeek XmlInputPath="$(MSBuildProjectDirectory)\Package.appxmanifest"
@@ -31,6 +32,13 @@
     <None Remove="Assets\BadgeLogo.scale-400.png" />
     <None Remove="Assets\ffmpeg.exe" />
     <None Remove="MainPage.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- FFmpeg binaries are runtime files, not qualified WinUI resources. -->
+    <Content Remove="Assets\*.dll;Assets\*.exe" />
+    <None Remove="Assets\*.dll;Assets\*.exe" />
+    <None Include="Assets\*.dll;Assets\*.exe" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
@@ -100,4 +108,7 @@
   <Import Project="..\TimelineWinUI\Timeline.projitems" Label="Shared" />
   <Import Project="..\WinUIShared\WinUIShared.projitems" Label="Shared" />
   <Import Project="..\TextToTimeSpanWinUI\TextToTimeSpan.projitems" Label="Shared" />
+  <ItemGroup>
+    <Watch Include="@(Page);*.xaml;Package.appxmanifest" />
+  </ItemGroup>
 </Project>
