@@ -54,10 +54,13 @@ namespace VideoCropper
         {
             Diagnostics.Log("Launching main window");
             _window = new MainWindow();
-            AppNotificationManager.Default.NotificationInvoked += (_, _) =>
-                _window.DispatcherQueue.TryEnqueue(() => _window.Activate());
-            AppNotificationManager.Default.Register();
-            _window.Closed += (_, _) => AppNotificationManager.Default.Unregister();
+            if (!AppStorage.NoProfile)
+            {
+                AppNotificationManager.Default.NotificationInvoked += (_, _) =>
+                    _window.DispatcherQueue.TryEnqueue(() => _window.Activate());
+                AppNotificationManager.Default.Register();
+                _window.Closed += (_, _) => AppNotificationManager.Default.Unregister();
+            }
             _window.Activate();
             Diagnostics.Log("Main window activated");
         }

@@ -40,6 +40,7 @@ namespace VideoCropper
             InitializeComponent();
             var version = typeof(App).Assembly.GetName().Version!;
             Title = $"Video Cropper v{version.ToString(3)}";
+            if (AppStorage.NoProfile) Title += " — No profile";
             Window = this;
 
             var settings = App.Settings;

@@ -14,6 +14,8 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ### Added
 
+- Added an opt-in `-NoProfile` launch flag with fresh temporary settings/logs per run, a title-bar indicator, and no Windows notification registration.
+- Made the processing command a hoverable link that opens a selectable full-command dialog with Copy command and Close buttons.
 - Added a saved, default-off “Notify when crop completes” option that sends a Windows notification after successful crops and activates the app when clicked.
 - Added `mise run build` for Debug compilation and `mise run build-portable` / `mise run build-setup` for packaging.
 - Added Help → NVIDIA Overlay Instructions with steps to hide the shortcut notification or disable the overlay, an explanation of preview graphics versus hardware encoding, and a link to NVIDIA's guidance.

@@ -73,6 +73,16 @@ unpackaged application and does not replace or migrate an existing MSIX install.
 
 ### Run locally
 
+Launch `VideoCropper.exe -NoProfile` for a fresh, isolated session. The flag is
+case-insensitive and off by default. Each launch uses a unique folder under
+`%TEMP%\VideoCropper` for settings, logs, and crash reports, leaving your normal
+profile untouched. Temporary files remain available after exit for debugging.
+Windows notification registration and completion notifications are disabled in
+this mode; the title bar shows “No profile”. This isolates app preferences, not
+video files: crop outputs still go beside the selected input, so use test videos.
+
+For a development session, run `mise run dev -- -NoProfile`.
+
 Run `mise run dev` to build and launch the app once in unpackaged x64 Debug mode
 using `dotnet run`.
 

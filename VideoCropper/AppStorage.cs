@@ -7,8 +7,11 @@ namespace VideoCropper;
 
 internal static class AppStorage
 {
-    public static string Root { get; } = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VideoCropper");
+    public static bool NoProfile { get; } = Array.Exists(Environment.GetCommandLineArgs(),
+        argument => string.Equals(argument, "-NoProfile", StringComparison.OrdinalIgnoreCase));
+    public static string Root { get; } = NoProfile
+        ? Path.Combine(Path.GetTempPath(), "VideoCropper", Guid.NewGuid().ToString("N"))
+        : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VideoCropper");
     public static string SettingsPath => Path.Combine(Root, "settings.json");
     public static string LogsFolder => Path.Combine(Root, "Logs");
     public static string CrashesFolder => Path.Combine(Root, "CrashReports");
