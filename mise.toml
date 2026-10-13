@@ -3,7 +3,7 @@ dotnet = "9"
 ffmpeg = "latest"
 
 [tasks.install-assets]
-run = "pwsh -NoProfile -File ./Scripts/Install-Assets.ps1"
+run = "pwsh -NoProfile -File ./scripts/Install-Assets.ps1"
 
 [tasks.dev]
 description = "Build and run the app in x64 Debug mode"

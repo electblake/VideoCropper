@@ -105,6 +105,12 @@ namespace VideoCropper
             });
         }
 
+        private async void NvidiaOverlayHelp_Click(object sender, RoutedEventArgs e)
+        {
+            NvidiaOverlayHelpDialog.XamlRoot = WindowFrame.XamlRoot;
+            await NvidiaOverlayHelpDialog.ShowAsync();
+        }
+
         private async void OpenAppDataFolder_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchFolderPathAsync(AppStorage.Root);

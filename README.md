@@ -14,6 +14,63 @@ When that completes, go to `\bin\Release\net<version>-windows\win-x64` and you'l
 
 ## Development
 
+### Portable release build
+
+From a Windows environment with a POSIX shell (such as Git Bash), the .NET 9 SDK
+(`dotnet`), and Python 3.11+ (`python`) on `PATH`, run:
+
+```sh
+sh scripts/build-portable.sh
+# Optional output directory, relative to the repository root or absolute:
+sh scripts/build-portable.sh ReleaseArtifacts/ci-build
+```
+
+Initialize the Git submodules and supply `VideoCropper/Assets/ffmpeg.exe` and its
+runtime DLLs before building. The script does not install tools or invoke mise.
+It reads the version from the package manifest and produces a self-contained x64
+folder, ZIP, and `.sha256` file under `ReleaseArtifacts/portable` by default.
+Use a fresh output directory for another build of the same version; existing build
+folders and ZIPs are not overwritten. Any failed command stops the script.
+The script does not bump versions, commit, tag, or publish to GitHub.
+
+### Setup installer build
+
+Install [Inno Setup 7.1+](https://jrsoftware.org/isdl.php) and add its installation
+directory to `PATH` so `ISCC.exe` is available. With the portable build prerequisites
+above, run from a POSIX shell on Windows:
+
+```sh
+sh scripts/build-setup.sh
+# Optional fresh output directory:
+sh scripts/build-setup.sh ReleaseArtifacts/ci-setup
+```
+
+This reuses the portable build and compiles `installer/VideoCropper.iss`. The default
+output directory is `ReleaseArtifacts/setup`; it contains the portable artifacts,
+`VideoCropper_<version>_x64_Setup.exe`, and the setup executable's `.sha256` file.
+Neither build script installs tools, invokes mise, or publishes a release.
+
+Setup installs for the current user under `%LOCALAPPDATA%\Programs\VideoCropper`,
+adds a Start Menu shortcut and an optional desktop shortcut, and registers an
+uninstaller in Windows Settings. A stable application ID makes later setups reuse
+the same installation. Close running crops before upgrading. User settings, logs,
+and crash reports in `%APPDATA%\VideoCropper` are retained on uninstall.
+
+The installer includes the self-contained .NET and Windows App SDK runtimes plus
+FFmpeg and its runtime DLLs from the portable payload. Users do not need mise,
+Python, a .NET SDK, or a separate Windows App SDK runtime installation. Builders
+must provide all FFmpeg runtime DLLs in `VideoCropper/Assets` before packaging.
+This follows Microsoft's [self-contained deployment guidance](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps).
+
+The current setup build is **unsigned**. Before public distribution, configure
+Inno Setup's [SignTool](https://jrsoftware.org/ishelp/topic_setup_signtool.htm)
+with a trusted signing identity to sign Setup and its uninstaller. The scripts do
+not create certificates, modify certificate trust, or store signing credentials.
+The legacy MSIX manifest is used for the version; this installer installs the
+unpackaged application and does not replace or migrate an existing MSIX install.
+
+### Run locally
+
 Run `mise run dev` to build and launch the app once in unpackaged x64 Debug mode
 using `dotnet run`.
 

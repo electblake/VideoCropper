@@ -12,6 +12,16 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ## [Unreleased]
 
+### Added
+
+- Added Help → NVIDIA Overlay Instructions with steps to hide the shortcut notification or disable the overlay, an explanation of preview graphics versus hardware encoding, and a link to NVIDIA's guidance.
+- Added a POSIX portable-release build script that reads the manifest version and creates a self-contained Windows x64 ZIP and SHA-256 checksum without mise.
+- Added an Inno Setup installer definition and POSIX build script for a per-user setup executable with bundled runtimes, Start Menu and optional desktop shortcuts, upgrade identity, and Windows uninstall registration.
+
+### Changed
+
+- Standardized the scripts directory as `scripts`, updated the asset-install task path, documented both packaging workflows, and enforced LF line endings for shell scripts.
+
 ## [2.2.1] - 2026-10-13
 
 ### Added

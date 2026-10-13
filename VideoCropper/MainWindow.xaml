@@ -29,8 +29,27 @@
                 <MenuFlyoutItem Text="Open Logs Folder" Click="OpenLogsFolder_Click"/>
                 <MenuFlyoutItem Text="Open Crash Reports Folder" Click="OpenCrashReportsFolder_Click"/>
             </MenuBarItem>
+            <MenuBarItem Title="Help" AccessKey="H">
+                <MenuFlyoutItem Text="NVIDIA Overlay Instructions..." AccessKey="N" Click="NvidiaOverlayHelp_Click"/>
+            </MenuBarItem>
         </MenuBar>
 
         <Frame x:Name="WindowFrame" Grid.Row="1"/>
+        <ContentDialog x:Name="NvidiaOverlayHelpDialog" Title="NVIDIA overlay instructions"
+                       CloseButtonText="Close" DefaultButton="Close">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="440">
+                <StackPanel Spacing="12" MaxWidth="460">
+                    <TextBlock TextWrapping="Wrap" Text="NVIDIA can display its Alt+Z banner when it detects Video Cropper's window or video preview. This can happen even when Hardware acceleration is off: that setting controls video encoding, while the window and preview still use graphics hardware."/>
+                    <TextBlock FontWeight="SemiBold" Text="Hide only the shortcut notification"/>
+                    <TextBlock TextWrapping="Wrap" Text="1. Press Alt+Z to open the NVIDIA overlay (or use your customized shortcut).&#x0a;2. Open the overlay's Settings, then Notifications.&#x0a;3. Turn off the notification for opening/closing the overlay or its shortcut reminder. Labels vary by NVIDIA version."/>
+                    <TextBlock TextWrapping="Wrap" Text="Use Settings inside the Alt+Z overlay for notification controls. Recording and other overlay features remain available."/>
+                    <TextBlock FontWeight="SemiBold" Text="Disable the entire overlay"/>
+                    <TextBlock TextWrapping="Wrap" Text="1. Open the NVIDIA app from the Windows Start menu.&#x0a;2. Go to Settings → Features.&#x0a;3. Turn off NVIDIA Overlay (also called In-Game Overlay)."/>
+                    <TextBlock TextWrapping="Wrap" Text="This affects other apps and games too, including overlay recording and performance displays. It does not turn off Video Cropper's hardware encoding. If the banner persists, finish your current crop and reopen Video Cropper."/>
+                    <HyperlinkButton Content="NVIDIA notification instructions" HorizontalAlignment="Left"
+                                     NavigateUri="https://forums.developer.nvidia.com/t/how-to-prevent-in-game-overlay-from-triggering/256026/10"/>
+                </StackPanel>
+            </ScrollViewer>
+        </ContentDialog>
     </Grid>
 </Window>
