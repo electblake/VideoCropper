@@ -12,6 +12,8 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ## [Unreleased]
 
+## [2.2.1] - 2026-10-13
+
 ### Added
 
 - Added `mise run watch` using the .NET SDK's built-in watcher to rebuild and restart on C#, XAML, and manifest changes; kept `mise run dev` as a single build-and-run.
@@ -23,6 +25,7 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ### Changed
 
+- Pointed the remaining modified shared components to maintained forks so release source checkouts include their commits.
 - Enabled warnings-as-errors and updated nullable annotations, typed settings reads, and shared-component initialization.
 - Debounced preview fitting, crop-frame rebuilding, and window-size persistence until resizing has paused for 500 ms; applied the final resize fit without animation.
 - Renamed “Load next video after cropping” to “Load next” without changing its behavior.
@@ -123,7 +126,8 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 - Added video preview controls and cropped output beside the source file.
 - Added build, usage, and certificate-installation documentation.
 
-[Unreleased]: https://github.com/electblake/VideoCropper/compare/v2.2.0.0...HEAD
+[Unreleased]: https://github.com/electblake/VideoCropper/compare/v2.2.1.0...HEAD
+[2.2.1]: https://github.com/electblake/VideoCropper/compare/v2.2.0.0...v2.2.1.0
 [2.2.0]: https://github.com/electblake/VideoCropper/compare/v2.1.0.0...v2.2.0.0
 [2.1.0]: https://github.com/electblake/VideoCropper/compare/v2.0.0.0...v2.1.0.0
 [2.0.0]: https://github.com/electblake/VideoCropper/compare/v1.0.1.0...v2.0.0.0
