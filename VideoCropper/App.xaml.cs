@@ -26,11 +26,8 @@ namespace VideoCropper
     /// </summary>
     public partial class App : Application
     {
-        private static readonly string CrashLogFolder = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-            "ReelBox",
-            "Crop");
-        private static readonly string CrashLogPath = System.IO.Path.Combine(CrashLogFolder, "crashes.log");
+        internal static AppDiagnostics Diagnostics { get; private set; } = null!;
+        internal static SettingsStore Settings { get; private set; } = null!;
         private Window? _window;
 
         /// <summary>
@@ -39,17 +36,12 @@ namespace VideoCropper
         /// </summary>
         public App()
         {
-            Directory.CreateDirectory(CrashLogFolder);
-            UnhandledException += (_, args) => LogCrash(args.Exception);
-            AppDomain.CurrentDomain.UnhandledException += (_, args) => LogCrash(args.ExceptionObject);
+            Diagnostics = new AppDiagnostics(AppStorage.LogsFolder, AppStorage.CrashesFolder, AppStorage.SettingsPath);
+            UnhandledException += (_, args) => Diagnostics.Report($"WinUI unhandled exception: {args.Message}", args.Exception);
+            Diagnostics.RegisterManagedExceptionHooks();
+            Settings = new SettingsStore(AppStorage.SettingsPath, message => Diagnostics.Log(message));
+            Diagnostics.Log("Settings loaded");
             InitializeComponent();
-        }
-
-        private static void LogCrash(object exception)
-        {
-            File.AppendAllText(
-                CrashLogPath,
-                $"{DateTimeOffset.Now:O}{Environment.NewLine}{exception}{Environment.NewLine}{Environment.NewLine}");
         }
 
         /// <summary>
@@ -58,8 +50,10 @@ namespace VideoCropper
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            Diagnostics.Log("Launching main window");
             _window = new MainWindow();
             _window.Activate();
+            Diagnostics.Log("Main window activated");
         }
     }
 }

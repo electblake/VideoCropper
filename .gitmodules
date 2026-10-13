@@ -3,13 +3,13 @@
 	url = https://github.com/PeteJobi/DraggerResizerWinUI.git
 [submodule "VideoCropperPageWinUI"]
 	path = VideoCropperPageWinUI
-	url = https://github.com/PeteJobi/VideoCropperPageWinUI.git
+	url = https://github.com/electblake/VideoCropperPageWinUI.git
 [submodule "TimelineWinUI"]
 	path = TimelineWinUI
 	url = https://github.com/PeteJobi/TimelineWinUI.git
 [submodule "WinUIShared"]
 	path = WinUIShared
-	url = https://github.com/PeteJobi/WinUIShared.git
+	url = https://github.com/electblake/WinUIShared.git
 [submodule "TextToTimeSpanWinUI"]
 	path = TextToTimeSpanWinUI
 	url = https://github.com/PeteJobi/TextToTimeSpanWinUI.git

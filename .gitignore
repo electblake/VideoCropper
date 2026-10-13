@@ -363,5 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 VideoCropper/Assets
+ReleaseArtifacts/
 .agents
 .vscode

@@ -4,3 +4,7 @@ ffmpeg = "latest"
 
 [tasks.install-assets]
 run = "pwsh -NoProfile -File ./Scripts/Install-Assets.ps1"
+
+[tasks.dev]
+description = "Build and run the app in x64 Debug mode"
+run = 'dotnet run --project VideoCropper/VideoCropper.csproj --configuration Debug --launch-profile "Cropper (Unpackaged)" -p:Platform=x64 -p:WindowsAppSDKSelfContained=true -p:WindowsPackageType=None'

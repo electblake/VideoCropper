@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Windowing;
-using Microsoft.Windows.Storage;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,10 +36,11 @@ namespace VideoCropper
         public MainWindow()
         {
             InitializeComponent();
+            var version = typeof(App).Assembly.GetName().Version!;
+            Title = $"Video Cropper v{version.ToString(3)}";
             Window = this;
 
-            using var applicationData = ApplicationData.GetDefault();
-            var settings = applicationData.LocalSettings.Values;
+            var settings = App.Settings;
             if (settings.ContainsKey(WindowWidthSetting))
             {
                 AppWindow.Resize(new SizeInt32(
@@ -54,14 +55,19 @@ namespace VideoCropper
             AppWindow.SetTitleBarIcon("Assets/EncircledPIERound.ico");
             WindowFrame.Navigate(typeof(MainPage));
             AppWindow.Closing += MainWindow_Closing;
+            AppWindow.Changed += (_, args) =>
+            {
+                if (args.DidSizeChange &&
+                    AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Restored })
+                    App.Settings.SetWindowSize(AppWindow.Size.Width, AppWindow.Size.Height);
+            };
         }
 
         private void MainWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
         {
-            using var applicationData = ApplicationData.GetDefault();
-            var settings = applicationData.LocalSettings.Values;
-            settings[WindowWidthSetting] = sender.Size.Width;
-            settings[WindowHeightSetting] = sender.Size.Height;
+            if (sender.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Restored })
+                App.Settings.SetWindowSize(sender.Size.Width, sender.Size.Height);
+            App.Diagnostics.Log("Main window closing");
         }
 
         private async void OpenVideo_Click(object sender, RoutedEventArgs e)
@@ -75,8 +81,10 @@ namespace VideoCropper
             }
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
+            App.Diagnostics.Log("Opening video picker (menu)");
             var files = await filePicker.PickMultipleFilesAsync();
-            var ffmpegPath = Path.Join(Package.Current.InstalledLocation.Path, "Assets/ffmpeg.exe");
+            App.Diagnostics.Log($"Video picker returned {files.Count} files");
+            var ffmpegPath = Path.Join(AppContext.BaseDirectory, "Assets/ffmpeg.exe");
             WindowFrame.Navigate(typeof(VideoCropperPage), new CropperProps
             {
                 FfmpegPath = ffmpegPath,
@@ -87,18 +95,17 @@ namespace VideoCropper
 
         private async void OpenAppDataFolder_Click(object sender, RoutedEventArgs e)
         {
-            using var applicationData = ApplicationData.GetDefault();
-            await Launcher.LaunchFolderAsync(applicationData.LocalFolder);
+            await Launcher.LaunchFolderPathAsync(AppStorage.Root);
+        }
+
+        private async void OpenCrashReportsFolder_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchFolderPathAsync(AppStorage.CrashesFolder);
         }
 
         private async void OpenLogsFolder_Click(object sender, RoutedEventArgs e)
         {
-            var logPath = Path.Join(
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "ReelBox",
-                "Crop");
-            var logFolder = await Windows.Storage.StorageFolder.GetFolderFromPathAsync(logPath);
-            await Launcher.LaunchFolderAsync(logFolder);
+            await Launcher.LaunchFolderPathAsync(AppStorage.LogsFolder);
         }
     }
 }

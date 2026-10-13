@@ -6,8 +6,7 @@
     xmlns:local="using:VideoCropper"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Title="Video Cropper">
+    mc:Ignorable="d">
 
     <Window.SystemBackdrop>
         <MicaBackdrop />
@@ -28,6 +27,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutItem Text="Open App Data Folder" Click="OpenAppDataFolder_Click"/>
                 <MenuFlyoutItem Text="Open Logs Folder" Click="OpenLogsFolder_Click"/>
+                <MenuFlyoutItem Text="Open Crash Reports Folder" Click="OpenCrashReportsFolder_Click"/>
             </MenuBarItem>
         </MenuBar>
 

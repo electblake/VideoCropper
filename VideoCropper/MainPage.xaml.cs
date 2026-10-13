@@ -57,26 +57,16 @@ namespace VideoCropper
             }
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(MainWindow.Window);
             WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
+            App.Diagnostics.Log("Opening video picker (home)");
             var files = await filePicker.PickMultipleFilesAsync();
+            App.Diagnostics.Log($"Video picker returned {files.Count} files");
             GoToCropper(files.Select(file => file.Path).ToList());
         }
 
-        private async void GoToCropper(List<string> videoPaths)
+        private void GoToCropper(List<string> videoPaths)
         {
-            var ffmpegPath = string.Empty;
-            try
-            {
-                ffmpegPath = Path.Join(Package.Current.InstalledLocation.Path, "Assets/ffmpeg.exe");
-            }
-            catch (InvalidOperationException)
-            {
-                ffmpegPath = "Assets/ffmpeg.exe";
-            }
-            if (!File.Exists(ffmpegPath))
-            {
-                await ErrorDialog.ShowAsync();
-                return;
-            }
+            var ffmpegPath = Path.Join(AppContext.BaseDirectory, "Assets/ffmpeg.exe");
+            App.Diagnostics.Log("Opening videos", string.Join("; ", videoPaths));
             Frame.Navigate(typeof(VideoCropperPage), new CropperProps { FfmpegPath = ffmpegPath, VideoPaths = videoPaths, TypeToNavigateTo = typeof(MainPage).FullName});
         }
 
@@ -84,7 +74,7 @@ namespace VideoCropper
         {
             if (e.Parameter is string outputFile)
             {
-                Console.WriteLine($"Path of output file is {outputFile}");
+                App.Diagnostics.Log($"Returned to home; output={outputFile}");
             }
         }
     }

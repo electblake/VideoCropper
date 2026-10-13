@@ -12,6 +12,12 @@ dotnet publish -c Release -p:Platform=x64 -p:WindowsAppSDKSelfContained=true -p:
 ```
 When that completes, go to `\bin\Release\net<version>-windows\win-x64` and you'll find the **VideoCropper.exe**.
 
+## Development
+
+Run `mise run dev` to build the current source and launch the app in unpackaged x64
+Debug mode using `dotnet run`. Close the running app before invoking it again so
+the build can replace its executable. Build failures stop the launch.
+
 ## Run without building
 You can also just download the release builds if you don't wish to build manually. Unfortunately packages created in WinUI 3 have to be signed with a certificate, and certificates sourced from trusted companies cost hundreds of dollars. If you wish to install the package, you'll have to install a certificate signed by myself, as described [here](https://github.com/PeteJobi/VideoCropper/releases/tag/cert). You only need to do this once - future updates will not require different certificates.
 
@@ -24,6 +30,57 @@ If you want to see more clearly what's in the crop frame, especially if you inte
 
 When you're done setting up the crop frame, click the "**Crop!**" button to start cropping. A progress bar showing the progress of the crop operation will show up. While the process is on-going, you can choose to pause or cancel it. Once the process is done, you can click the "**View**" button to view the output. 
 
+**Settings → Preview while processing** is enabled by default and saved between sessions.
+During cropping, the paused source preview follows FFmpeg's latest processed timestamp
+at most twice per second, retaining the crop overlay. Slow seeks skip intermediate updates
+instead of building a queue. Playback controls are disabled while the preview follows
+processing; turn the setting off to stop automatic seeking. Video navigation is disabled
+during a crop. Completion, cancellation, and leaving the page stop preview updates.
+This previews the source at the reported processing position, not the encoded output.
+Seeking still uses decoder resources, especially for high-resolution or long-GOP video;
+disable the setting when maximum encoding throughput matters. It does not change the crop
+dimensions automatically when the video's composition changes.
+
 The output file will be created in the same folder and it will have the same file name with "__CROPPED_" appended to it. Be warned that if such a file exists, it will be deleted.
 
 Click the **Go back** button to return to the file selection page.
+
+## Settings and diagnostics
+
+The app resolves the current user's Windows roaming application-data folder using
+`Environment.SpecialFolder.ApplicationData` and stores its data under `VideoCropper`
+(normally `%APPDATA%\VideoCropper`). It uses this store for both packaged and unpackaged
+launches without requiring a package identity. Windows may virtualize the physical
+path for an MSIX installation; **File → Open App Data Folder** opens the app's store.
+
+- `settings.json`: window dimensions, crop presets and coordinates, crop behavior,
+  auto-advance, and hardware-acceleration preferences. Changes are saved immediately
+  by writing and flushing a complete temporary document, then replacing the settings
+  file. Settings are loaded before the main window is created. Invalid configuration
+  fails visibly and is not silently reset. Old Windows settings stores are not imported.
+- `Logs\`: a unique timestamped log per process session, including startup/runtime
+  information, saved settings, video loading, media details, GPU discovery, crop
+  requests, and external-process commands, stdout, stderr, and exit codes. Each entry
+  is written synchronously, including entries from background threads.
+- `CrashReports\`: unique text reports for unhandled WinUI/CLR exceptions, unobserved
+  task failures, media failures, and unsuccessful FFmpeg crop processes. Each includes
+  the exception details available from the runtime, settings on disk, and a copy of
+  the session log. Exceptions are not marked handled or suppressed.
+
+Use **File → Open Logs Folder** or **File → Open Crash Reports Folder** to inspect or
+share diagnostics. Reports contain video paths, commands, and configuration values.
+For debugging, provide the report and the steps that triggered the failure.
+
+These are application-level reports, not native memory dumps. Native fail-fast
+termination, process kills, and failures before diagnostics initialization may leave
+only the last persisted session log. WinUI may provide less detail than the original
+exception; see [Microsoft's UnhandledException documentation](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception).
+
+Run the diagnostics integration checks with:
+
+```powershell
+dotnet run --project Tests/DiagnosticsSmoke/DiagnosticsSmoke.csproj
+```
+
+The checks use an isolated temporary folder and deliberately crash a child process
+to verify that crash reports preserve the final log entries and exception details.
