@@ -16,13 +16,13 @@ When that completes, go to `\bin\Release\net<version>-windows\win-x64` and you'l
 
 ### Portable release build
 
-From a Windows environment with a POSIX shell (such as Git Bash), the .NET 9 SDK
-(`dotnet`), and Python 3.11+ (`python`) on `PATH`, run:
+From Windows with PowerShell 7.4+ (`pwsh`) and the .NET 9 SDK
+(`dotnet`) on `PATH`, run:
 
-```sh
-sh scripts/build-portable.sh
+```powershell
+pwsh -NoProfile -File scripts/build-portable.ps1
 # Optional output directory, relative to the repository root or absolute:
-sh scripts/build-portable.sh ReleaseArtifacts/ci-build
+pwsh -NoProfile -File scripts/build-portable.ps1 ReleaseArtifacts/ci-build
 ```
 
 Initialize the Git submodules and supply `VideoCropper/Assets/ffmpeg.exe` and its
@@ -35,20 +35,22 @@ The script does not bump versions, commit, tag, or publish to GitHub.
 
 ### Setup installer build
 
-Install [Inno Setup 7.1+](https://jrsoftware.org/isdl.php) and add its installation
-directory to `PATH` so `ISCC.exe` is available. With the portable build prerequisites
-above, run from a POSIX shell on Windows:
+The setup script restores the pinned `Tools.InnoSetup` 7.1.0 NuGet dependency from
+`installer/Installer.Tools.csproj` into your user NuGet cache. No system-wide
+Inno Setup installation or compiler entry on `PATH` is needed. With the portable
+build prerequisites above, run from PowerShell on Windows:
 
-```sh
-sh scripts/build-setup.sh
+```powershell
+pwsh -NoProfile -File scripts/build-setup.ps1
 # Optional fresh output directory:
-sh scripts/build-setup.sh ReleaseArtifacts/ci-setup
+pwsh -NoProfile -File scripts/build-setup.ps1 ReleaseArtifacts/ci-setup
 ```
 
 This reuses the portable build and compiles `installer/VideoCropper.iss`. The default
 output directory is `ReleaseArtifacts/setup`; it contains the portable artifacts,
 `VideoCropper_<version>_x64_Setup.exe`, and the setup executable's `.sha256` file.
-Neither build script installs tools, invokes mise, or publishes a release.
+The setup script restores its compiler using the committed NuGet lock file.
+Neither build script invokes mise or publishes a release.
 
 Setup installs for the current user under `%LOCALAPPDATA%\Programs\VideoCropper`,
 adds a Start Menu shortcut and an optional desktop shortcut, and registers an
@@ -58,7 +60,7 @@ and crash reports in `%APPDATA%\VideoCropper` are retained on uninstall.
 
 The installer includes the self-contained .NET and Windows App SDK runtimes plus
 FFmpeg and its runtime DLLs from the portable payload. Users do not need mise,
-Python, a .NET SDK, or a separate Windows App SDK runtime installation. Builders
+PowerShell, a .NET SDK, or a separate Windows App SDK runtime installation. Builders
 must provide all FFmpeg runtime DLLs in `VideoCropper/Assets` before packaging.
 This follows Microsoft's [self-contained deployment guidance](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps).
 

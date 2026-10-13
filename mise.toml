@@ -9,6 +9,18 @@ run = "pwsh -NoProfile -File ./scripts/Install-Assets.ps1"
 description = "Build and run the app in x64 Debug mode"
 run = 'dotnet run --project VideoCropper/VideoCropper.csproj --configuration Debug --launch-profile "Cropper (Unpackaged)" -p:Platform=x64 -p:WindowsAppSDKSelfContained=true -p:WindowsPackageType=None'
 
+[tasks.build]
+description = "Build the unpackaged x64 Debug app without running or publishing"
+run = 'dotnet build VideoCropper/VideoCropper.csproj --configuration Debug -p:Platform=x64 -p:WindowsAppSDKSelfContained=true -p:WindowsPackageType=None'
+
+[tasks.build-portable]
+description = "Build the portable Windows x64 release ZIP and checksum"
+run = 'pwsh -NoProfile -File ./scripts/build-portable.ps1'
+
+[tasks.build-setup]
+description = "Build the Windows x64 setup installer and checksum"
+run = 'pwsh -NoProfile -File ./scripts/build-setup.ps1'
+
 [tasks.watch]
 description = "Watch source files, rebuild, and restart the x64 Debug app"
 run = 'dotnet watch --project VideoCropper/VideoCropper.csproj --no-hot-reload run --configuration Debug --launch-profile "Cropper (Unpackaged)" --property:Platform=x64 --property:WindowsAppSDKSelfContained=true --property:WindowsPackageType=None'

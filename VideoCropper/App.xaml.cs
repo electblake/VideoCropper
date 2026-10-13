@@ -11,6 +11,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -52,8 +54,21 @@ namespace VideoCropper
         {
             Diagnostics.Log("Launching main window");
             _window = new MainWindow();
+            AppNotificationManager.Default.NotificationInvoked += (_, _) =>
+                _window.DispatcherQueue.TryEnqueue(() => _window.Activate());
+            AppNotificationManager.Default.Register();
+            _window.Closed += (_, _) => AppNotificationManager.Default.Unregister();
             _window.Activate();
             Diagnostics.Log("Main window activated");
+        }
+
+        internal static void NotifyCropCompleted(string outputFile)
+        {
+            var notification = new AppNotificationBuilder()
+                .AddText("Crop complete")
+                .AddText(System.IO.Path.GetFileName(outputFile))
+                .BuildNotification();
+            AppNotificationManager.Default.Show(notification);
         }
     }
 }

@@ -5,7 +5,9 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap rescap">
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  IgnorableNamespaces="uap rescap desktop com">
 
   <Identity
     Name="ba762d62-a6c9-4754-92c4-b78db6390f08"
@@ -43,6 +45,18 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
         <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badgeAndTileText"/>
       </uap:VisualElements>
+      <Extensions>
+        <desktop:Extension Category="windows.toastNotificationActivation">
+          <desktop:ToastNotificationActivation ToastActivatorCLSID="97b85dcd-9845-494b-8dad-f7deaf645f9e" />
+        </desktop:Extension>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="VideoCropper.exe" Arguments="----AppNotificationActivated:" DisplayName="Video Cropper">
+              <com:Class Id="97b85dcd-9845-494b-8dad-f7deaf645f9e" />
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+      </Extensions>
     </Application>
   </Applications>
 

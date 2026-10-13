@@ -1,4 +1,4 @@
-; Compile through scripts/build-setup.sh with Inno Setup 7.1+.
+; Compile through scripts/build-setup.ps1 with Inno Setup 7.1+.
 ; Keep AppId stable across releases so Setup updates the existing installation.
 [Setup]
 AppId=electblake.VideoCropper
