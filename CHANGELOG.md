@@ -14,6 +14,9 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ### Added
 
+- Added four small MP4, MKV, and MOV crop samples with centered portrait or landscape content, black bars, and `scripts/generate-samples.ps1` for regeneration.
+- Added FFmpeg integration checks for graceful stopping, paused stopping, playable partial output, cancellation deletion, and subsequent normal completion.
+- Added “Stop and keep output” to the cancellation popup, with an explanation of both choices, graceful saving of partial crops (including paused crops), and no automatic next-video or quit action after stopping.
 - Added an opt-in `-NoProfile` launch flag with fresh temporary settings/logs per run, a title-bar indicator, and no Windows notification registration.
 - Made the processing command a hoverable link that opens a selectable full-command dialog with Copy command and Close buttons.
 - Added a saved, default-off “Notify when crop completes” option that sends a Windows notification after successful crops and activates the app when clicked.
