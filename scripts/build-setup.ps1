@@ -12,12 +12,16 @@ $toolsProject = Join-Path $PSScriptRoot '../installer/Installer.Tools.csproj'
 dotnet restore $toolsProject --locked-mode
 $compiler = (dotnet msbuild $toolsProject -getProperty:InnoSetupCompiler).Trim()
 & $compiler --version
-& (Join-Path $PSScriptRoot 'build-portable.ps1') -OutputDirectory $OutputDirectory
 
 [xml]$manifest = Get-Content -LiteralPath 'VideoCropper/Package.appxmanifest' -Raw
 $version = $manifest.Package.Identity.Version
-$output = (Resolve-Path -LiteralPath $OutputDirectory).Path
-$payload = Join-Path $output "VideoCropper_${version}_x64"
+$output = (New-Item -ItemType Directory -Path $OutputDirectory -Force).FullName
+$payload = (New-Item -ItemType Directory -Path (Join-Path $output "VideoCropper_${version}_x64_setup-payload")).FullName
+dotnet publish VideoCropper/VideoCropper.csproj `
+    --configuration Release --runtime win-x64 --self-contained false `
+    -p:Platform=x64 -p:WindowsAppSDKSelfContained=false -p:DownloadFFmpeg=true `
+    -p:WindowsPackageType=None -p:PublishProfile= `
+    --output $payload
 & $compiler "-dAppVersion=$version" "-dPayloadDir=$payload" "-dSetupOutput=$output" `
     (Join-Path $PSScriptRoot '../installer/VideoCropper.iss')
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
@@ -38,7 +38,7 @@
     <!-- FFmpeg binaries are runtime files, not qualified WinUI resources. -->
     <Content Remove="Assets\*.dll;Assets\*.exe" />
     <None Remove="Assets\*.dll;Assets\*.exe" />
-    <None Include="Assets\*.dll;Assets\*.exe" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="Assets\*.dll;Assets\*.exe" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Condition="'$(DownloadFFmpeg)' != 'true'" />
   </ItemGroup>
 
   <ItemGroup>

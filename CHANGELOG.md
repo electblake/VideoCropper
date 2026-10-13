@@ -12,6 +12,8 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-10-13
+
 ### Added
 
 - Added four small MP4, MKV, and MOV crop samples with centered portrait or landscape content, black bars, and `scripts/generate-samples.ps1` for regeneration.
@@ -23,10 +25,12 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 - Added `mise run build` for Debug compilation and `mise run build-portable` / `mise run build-setup` for packaging.
 - Added Help → NVIDIA Overlay Instructions with steps to hide the shortcut notification or disable the overlay, an explanation of preview graphics versus hardware encoding, and a link to NVIDIA's guidance.
 - Added a PowerShell portable-release build script that reads the manifest version and creates a self-contained Windows x64 ZIP and SHA-256 checksum without mise.
-- Added an Inno Setup installer definition and PowerShell build script for a per-user setup executable with bundled runtimes, Start Menu and optional desktop shortcuts, upgrade identity, and Windows uninstall registration.
+- Added a small Inno Setup installer that downloaded and installed checksum-pinned Visual C++, .NET 8, Windows App Runtime 1.7, and FFmpeg dependencies during setup, with Start Menu and optional desktop shortcuts and Windows uninstall registration.
 
 ### Changed
 
+- Separated the framework-dependent setup build from the self-contained portable build, excluding runtime and FFmpeg binaries from the setup executable.
+- Installed setup releases for all users under Program Files with administrator access and an internet connection; documented uninstalling the previous per-user setup before switching.
 - Declared Inno Setup 7.1.0 as a pinned, lock-file-backed NuGet build dependency and restored it automatically for setup builds, removing the system installation and PATH requirement.
 - Converted packaging scripts to PowerShell 7.4+ with native ZIP and SHA-256 support, removed the shell/Python requirement, and invoked them through `pwsh` in mise.
 - Standardized the scripts directory as `scripts`, updated the asset-install task path, documented both packaging workflows, and enforced LF line endings for PowerShell scripts.
@@ -145,7 +149,8 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 - Added video preview controls and cropped output beside the source file.
 - Added build, usage, and certificate-installation documentation.
 
-[Unreleased]: https://github.com/electblake/VideoCropper/compare/v2.2.1.0...HEAD
+[Unreleased]: https://github.com/electblake/VideoCropper/compare/v2.3.0.0...HEAD
+[2.3.0]: https://github.com/electblake/VideoCropper/compare/v2.2.1.0...v2.3.0.0
 [2.2.1]: https://github.com/electblake/VideoCropper/compare/v2.2.0.0...v2.2.1.0
 [2.2.0]: https://github.com/electblake/VideoCropper/compare/v2.1.0.0...v2.2.0.0
 [2.1.0]: https://github.com/electblake/VideoCropper/compare/v2.0.0.0...v2.1.0.0

@@ -37,8 +37,9 @@ The script does not bump versions, commit, tag, or publish to GitHub.
 
 The setup script restores the pinned `Tools.InnoSetup` 7.1.0 NuGet dependency from
 `installer/Installer.Tools.csproj` into your user NuGet cache. No system-wide
-Inno Setup installation or compiler entry on `PATH` is needed. With the portable
-build prerequisites above, run from PowerShell on Windows:
+Inno Setup installation or compiler entry on `PATH` is needed. With PowerShell
+7.4+, the .NET 9 SDK, and initialized Git submodules, run on Windows (local
+FFmpeg binaries are not needed for this build):
 
 ```powershell
 pwsh -NoProfile -File scripts/build-setup.ps1
@@ -46,23 +47,29 @@ pwsh -NoProfile -File scripts/build-setup.ps1
 pwsh -NoProfile -File scripts/build-setup.ps1 ReleaseArtifacts/ci-setup
 ```
 
-This reuses the portable build and compiles `installer/VideoCropper.iss`. The default
-output directory is `ReleaseArtifacts/setup`; it contains the portable artifacts,
+This publishes a framework-dependent app and compiles `installer/VideoCropper.iss`.
+The default output directory is `ReleaseArtifacts/setup`; it contains the app payload,
 `VideoCropper_<version>_x64_Setup.exe`, and the setup executable's `.sha256` file.
 The setup script restores its compiler using the committed NuGet lock file.
 Neither build script invokes mise or publishes a release.
 
-Setup installs for the current user under `%LOCALAPPDATA%\Programs\VideoCropper`,
+Setup requires administrator access and installs under `%ProgramFiles%\VideoCropper`,
 adds a Start Menu shortcut and an optional desktop shortcut, and registers an
 uninstaller in Windows Settings. A stable application ID makes later setups reuse
-the same installation. Close running crops before upgrading. User settings, logs,
+the same installation. Uninstall the previous per-user bundled setup before switching
+to this all-users installer. Close running crops before upgrading. User settings, logs,
 and crash reports in `%APPDATA%\VideoCropper` are retained on uninstall.
 
-The installer includes the self-contained .NET and Windows App SDK runtimes plus
-FFmpeg and its runtime DLLs from the portable payload. Users do not need mise,
-PowerShell, a .NET SDK, or a separate Windows App SDK runtime installation. Builders
-must provide all FFmpeg runtime DLLs in `VideoCropper/Assets` before packaging.
-This follows Microsoft's [self-contained deployment guidance](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps).
+The small setup executable embeds only the framework-dependent application.
+During Setup, Inno downloads checksum-pinned Visual C++ x64, .NET 8 x64, Windows
+App Runtime 1.7 x64, and FFmpeg dependencies. Setup runs the Microsoft runtime
+installers and installs FFmpeg into `Assets/ffmpeg.exe`; users do not run commands
+or configure PATH. Internet access is required during installation. Microsoft
+runtimes remain installed on uninstall; the app-local FFmpeg executable is removed.
+Dependency URLs and SHA-256 hashes are pinned in `installer/VideoCropper.iss` and
+must be updated together when servicing dependencies. The portable build remains
+self-contained. See Microsoft's [framework-dependent deployment guidance](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/deploy-unpackaged-apps)
+and Inno's [download and archive support](https://jrsoftware.org/ishelp/topic_filessection.htm).
 
 The current setup build is **unsigned**. Before public distribution, configure
 Inno Setup's [SignTool](https://jrsoftware.org/ishelp/topic_setup_signtool.htm)

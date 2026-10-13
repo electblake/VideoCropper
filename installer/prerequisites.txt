@@ -1,0 +1,12 @@
+Setup downloads and installs dependencies automatically
+
+Video Cropper Setup contains only the application files. During installation,
+Setup downloads and installs the x64 Visual C++ runtime, .NET 8 runtime,
+Windows App Runtime 1.7, and FFmpeg. An internet connection and administrator
+access are required. Video Cropper is installed for all users in Program Files.
+
+Downloads are verified against pinned SHA-256 checksums. FFmpeg is installed
+inside Video Cropper's Assets folder; no PATH configuration is needed.
+
+The Microsoft runtimes are shared with other applications and remain installed
+when you uninstall Video Cropper. FFmpeg is removed with Video Cropper.
