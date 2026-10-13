@@ -1,6 +1,44 @@
 using System.Diagnostics;
 using System.Text.Json.Nodes;
+using System.Text.Json;
 using VideoCropper;
+
+if (args.Length > 0 && args[0] == "profile")
+{
+    if (AppStorage.NoProfile)
+    {
+        var isolated = new SettingsStore(AppStorage.SettingsPath, _ => { });
+        Check(!isolated.ContainsKey("Test.Marker"), "isolated profile starts fresh");
+        isolated["Test.Marker"] = "isolated";
+    }
+    Console.WriteLine(JsonSerializer.Serialize(new { AppStorage.NoProfile, AppStorage.Root,
+        AppStorage.SettingsPath, AppStorage.LogsFolder, AppStorage.CrashesFolder }));
+    return;
+}
+
+void VerifyProfiles()
+{
+    var normalProfile = ReadProfile();
+    Check(!normalProfile["NoProfile"]!.GetValue<bool>(), "profile isolation is opt-in");
+    var expectedRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VideoCropper");
+    Check(normalProfile["Root"]!.GetValue<string>() == expectedRoot, "default profile location");
+    var normalSettings = Path.Combine(expectedRoot, "settings.json");
+    var beforeProfileTests = File.Exists(normalSettings) ? File.ReadAllBytes(normalSettings) : null;
+    var isolatedProfile = ReadProfile("-NoProfile");
+    var secondProfile = ReadProfile("-nOpRoFiLe");
+    Check(isolatedProfile["Root"]!.GetValue<string>() != secondProfile["Root"]!.GetValue<string>(), "each isolated session gets a unique directory");
+    foreach (var profile in new[] { isolatedProfile, secondProfile })
+    {
+        Check(profile["NoProfile"]!.GetValue<bool>(), "flag is case insensitive");
+        var profileRoot = profile["Root"]!.GetValue<string>();
+        Check(profileRoot.StartsWith(Path.Combine(Path.GetTempPath(), "VideoCropper") + Path.DirectorySeparatorChar), "isolated profile lives under temp");
+        foreach (var key in new[] { "SettingsPath", "LogsFolder", "CrashesFolder" })
+            Check(Path.GetDirectoryName(profile[key]!.GetValue<string>()) == profileRoot, key + " is isolated");
+        Check(new SettingsStore(profile["SettingsPath"]!.GetValue<string>(), _ => { }).Get<string>("Test.Marker") == "isolated", "isolated settings can be saved");
+    }
+    Check(beforeProfileTests == null ? !File.Exists(normalSettings) : File.ReadAllBytes(normalSettings).SequenceEqual(beforeProfileTests), "normal settings remain untouched");
+    Console.WriteLine("PASS: default profile, case-insensitive -NoProfile, fresh independent sessions, and normal settings unchanged.");
+}
 
 var root = args.Length > 1 ? args[1] : Path.Combine(Path.GetTempPath(), "VideoCropper-tests", Guid.NewGuid().ToString("N"));
 var settingsPath = Path.Combine(root, "settings.json");
@@ -19,6 +57,7 @@ if (args.Length > 0 && args[0] == "invalid-settings")
     return;
 }
 
+VerifyProfiles();
 var store = new SettingsStore(settingsPath, message => diagnostics.Log(message));
 var preview = new ProcessingPreviewPosition();
 var duration = TimeSpan.FromMinutes(10);
@@ -96,4 +135,18 @@ static void RunFailure(string mode, string root, string expectedError, string ex
 static void Check(bool condition, string name)
 {
     if (!condition) throw new Exception("Failed: " + name);
+}
+
+static JsonObject ReadProfile(string? flag = null)
+{
+    var start = new ProcessStartInfo(Environment.ProcessPath!)
+    { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
+    start.ArgumentList.Add("profile");
+    if (flag != null) start.ArgumentList.Add(flag);
+    using var child = Process.Start(start)!;
+    var output = child.StandardOutput.ReadToEnd();
+    var error = child.StandardError.ReadToEnd();
+    child.WaitForExit();
+    Check(child.ExitCode == 0, "profile child: " + error);
+    return JsonNode.Parse(output)!.AsObject();
 }

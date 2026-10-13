@@ -13,6 +13,10 @@ run = 'dotnet run --project VideoCropper/VideoCropper.csproj --configuration Deb
 description = "Build the unpackaged x64 Debug app without running or publishing"
 run = 'dotnet build VideoCropper/VideoCropper.csproj --configuration Debug -p:Platform=x64 -p:WindowsAppSDKSelfContained=true -p:WindowsPackageType=None'
 
+[tasks.test]
+description = "Build and run regression checks using isolated output and temporary test files"
+run = 'pwsh -NoProfile -File ./scripts/test.ps1'
+
 [tasks.build-portable]
 description = "Build the portable Windows x64 release ZIP and checksum"
 run = 'pwsh -NoProfile -File ./scripts/build-portable.ps1'
