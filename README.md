@@ -37,6 +37,10 @@ If you want to see more clearly what's in the crop frame, especially if you inte
 When you're done setting up the crop frame, click the "**Crop!**" button to start cropping. A progress bar showing the progress of the crop operation will show up. While the process is on-going, you can choose to pause or cancel it. Once the process is done, you can click the "**View**" button to view the output. 
 
 **Settings → Preview while processing** is enabled by default and saved between sessions.
+Set the timeline's **In** and **Out** markers to choose the segment to export. Cropping
+uses that range for video and audio; progress and ETA cover the selected duration.
+The initial range covers the whole video.
+
 During cropping, the paused source preview follows FFmpeg's latest processed timestamp
 at most twice per second, retaining the crop overlay. Slow seeks skip intermediate updates
 instead of building a queue. Playback controls are disabled while the preview follows

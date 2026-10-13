@@ -30,6 +30,7 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ### Fixed
 
+- Applied timeline in/out points to encoded video and audio, calculated progress over the selected duration, and offset processing-preview seeks to the source in point.
 - Copied FFmpeg binaries as runtime files instead of WinUI resources.
 - Closed the attached cancellation flyout directly instead of traversing its visual parents.
 - Corrected `mise run watch` argument forwarding so rebuilds use the unpackaged x64 configuration instead of AnyCPU MSIX packaging.
