@@ -10,3 +10,4 @@ $env:PATH = "$testBuild;$env:PATH"
 dotnet run --project Tests/DiagnosticsSmoke -p:TreatWarningsAsErrors=true
 dotnet run --project Tests/CropRangeSmoke -p:TreatWarningsAsErrors=true -- VideoCropper/Assets/ffmpeg.exe samples
 dotnet run --project Tests/StopSmoke -p:TreatWarningsAsErrors=true "-p:AppBuildDir=$testBuild" -- VideoCropper/Assets/ffmpeg.exe
+dotnet run --project Tests/CropFailureSmoke -p:TreatWarningsAsErrors=true "-p:AppBuildDir=$testBuild" -- VideoCropper/Assets/ffmpeg.exe

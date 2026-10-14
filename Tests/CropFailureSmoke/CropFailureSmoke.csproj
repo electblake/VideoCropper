@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+    <!-- Compile the production crop code against a console diagnostics host. -->
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="VideoCropper" HintPath="$(AppBuildDir)/VideoCropper.dll" />
+    <Reference Include="FileLogger" HintPath="$(AppBuildDir)/FileLogger.dll" />
+    <Compile Include="../../VideoCropperPageWinUI/CropProcessor.cs" Link="CropProcessor.cs" />
+    <Compile Include="../../VideoCropperPageWinUI/CropTimeRange.cs" Link="CropTimeRange.cs" />
+  </ItemGroup>
+</Project>

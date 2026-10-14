@@ -12,6 +12,19 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ## [Unreleased]
 
+### Added
+
+- Added a saved “Auto run next” option under “Load next”, with a countdown after the next video loads and Stop and Continue buttons.
+- Added saved Settings inputs for the auto-run delay and quit countdown, defaulting to 6 and 30 seconds respectively.
+- Added a saved Auto hardware choice that selects a detected GPU with an available FFmpeg encoder, preferring NVIDIA, then Intel, then AMD.
+- Added regression checks for hardware selection, failed crops without false completion, and progress during a subsequent successful CPU crop.
+
+### Fixed
+
+- Preserved the selected GPU and hardware-acceleration preference when refreshing the detected GPU list.
+- Routed unsuccessful FFmpeg crops to the existing failure dialog and prevented automatic next-video or quit actions after failure.
+- Initialized processing state before starting crop work and resolved the hardware choice before encoding.
+
 ## [2.3.0] - 2026-10-13
 
 ### Added

@@ -1,8 +1,20 @@
 using System.Diagnostics;
 using FileLogger;
 using WinUIShared.Helpers;
+using WinUIShared.Controls;
 
 var ffmpeg = Path.GetFullPath(args[0]);
+var nvidia = new GpuInfo("NVIDIA", 0, GpuVendor.Nvidia);
+var intel = new GpuInfo("Intel", 0, GpuVendor.Intel);
+var amd = new GpuInfo("AMD", 0, GpuVendor.Amd);
+GpuInfo[] devices = [new("Auto", 0, GpuVendor.Auto), intel, amd, nvidia];
+Check(GpuInfo.SelectBest(devices, new HashSet<string> { "hevc_nvenc", "hevc_qsv", "hevc_amf" }) == nvidia,
+    "Auto prefers NVIDIA regardless of discovery order");
+Check(GpuInfo.SelectBest(devices, new HashSet<string> { "hevc_qsv", "hevc_amf" }) == intel,
+    "Auto excludes GPUs whose encoder is missing");
+Check(GpuInfo.SelectBest(devices, new HashSet<string> { "hevc_amf" }) == amd,
+    "Auto selects AMD when it is the supported GPU");
+Console.WriteLine("PASS: Auto hardware preference and encoder support filtering.");
 var root = Path.Combine(Path.GetTempPath(), "VideoCropper-stop-" + Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(root);
 var processor = new TestProcessor(ffmpeg);
