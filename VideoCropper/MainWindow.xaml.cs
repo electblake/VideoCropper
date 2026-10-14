@@ -112,6 +112,63 @@ namespace VideoCropper
             await NvidiaOverlayHelpDialog.ShowAsync();
         }
 
+        private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
+        {
+            var version = typeof(App).Assembly.GetName().Version!.ToString();
+            var status = new TextBlock { Text = $"Running version {version}. Checking GitHub for updates…", TextWrapping = TextWrapping.Wrap };
+            var progress = new ProgressBar { IsIndeterminate = true, Minimum = 0, Maximum = 100 };
+            var download = new Button { Content = "Download installer", IsEnabled = false };
+            var install = new Button { Content = "Quit and install new version", IsEnabled = false };
+            var content = new StackPanel { Spacing = 12, MinWidth = 400, MaxWidth = 500 };
+            content.Children.Add(status);
+            content.Children.Add(progress);
+            content.Children.Add(download);
+            content.Children.Add(install);
+            content.Children.Add(new TextBlock { Text = "Finish any active crops before installing. Windows will ask permission to run Setup.", TextWrapping = TextWrapping.Wrap });
+            var dialog = new ContentDialog
+            {
+                Title = "Check for updates", XamlRoot = WindowFrame.XamlRoot,
+                Content = content, CloseButtonText = "Close"
+            };
+            var busy = true;
+            dialog.Closing += (_, args) => args.Cancel = busy;
+            dialog.Opened += async (_, _) =>
+            {
+                var release = await AppUpdates.CheckAsync(version);
+                progress.IsIndeterminate = false;
+                busy = false;
+                if (release is null)
+                {
+                    status.Text = $"You’re up to date. Running version {version}.";
+                    return;
+                }
+                status.Text = $"Version {release.Tag} is available. You’re running {version}.";
+                download.IsEnabled = true;
+                download.Click += async (_, _) =>
+                {
+                    busy = true;
+                    download.IsEnabled = false;
+                    status.Text = "Downloading installer…";
+                    var path = await AppUpdates.DownloadAsync(release, new Progress<double>(percent =>
+                    {
+                        progress.Value = percent;
+                        status.Text = $"Downloading installer… {percent:F0}%";
+                    }));
+                    status.Text = $"Version {release.Tag} is downloaded and ready to install.";
+                    progress.Value = 100;
+                    busy = false;
+                    install.IsEnabled = true;
+                    install.Click += (_, _) =>
+                    {
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(path) { UseShellExecute = true });
+                        dialog.Hide();
+                        Close();
+                    };
+                };
+            };
+            await dialog.ShowAsync();
+        }
+
         private async void OpenAppDataFolder_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchFolderPathAsync(AppStorage.Root);

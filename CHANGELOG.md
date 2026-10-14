@@ -12,18 +12,25 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-10-13
+
 ### Added
 
 - Added a saved “Auto run next” option under “Load next”, with a countdown after the next video loads and Stop and Continue buttons.
 - Added saved Settings inputs for the auto-run delay and quit countdown, defaulting to 6 and 30 seconds respectively.
 - Added a saved Auto hardware choice that selects a detected GPU with an available FFmpeg encoder, preferring NVIDIA, then Intel, then AMD.
 - Added regression checks for hardware selection, failed crops without false completion, and progress during a subsequent successful CPU crop.
+- Added Help → Check for updates with installer download progress and an option to quit and install the new version.
+- Added a specific memory-exhaustion error with copyable encoder diagnostics and a report path, while keeping the current video available for another crop.
 
 ### Fixed
 
 - Preserved the selected GPU and hardware-acceleration preference when refreshing the detected GPU list.
 - Routed unsuccessful FFmpeg crops to the existing failure dialog and prevented automatic next-video or quit actions after failure.
 - Initialized processing state before starting crop work and resolved the hardware choice before encoding.
+- Streamed diagnostic session logs into reports to avoid loading the entire log into memory during failure reporting.
+- Placed Cancel and delete before Stop and keep output in the cancellation confirmation.
+- Preserved installer directory and shortcut choices during updates and enabled checks for files in use.
 
 ## [2.3.0] - 2026-10-13
 
@@ -162,7 +169,8 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 - Added video preview controls and cropped output beside the source file.
 - Added build, usage, and certificate-installation documentation.
 
-[Unreleased]: https://github.com/electblake/VideoCropper/compare/v2.3.0.0...HEAD
+[Unreleased]: https://github.com/electblake/VideoCropper/compare/v2.3.1.0...HEAD
+[2.3.1]: https://github.com/electblake/VideoCropper/compare/v2.3.0.0...v2.3.1.0
 [2.3.0]: https://github.com/electblake/VideoCropper/compare/v2.2.1.0...v2.3.0.0
 [2.2.1]: https://github.com/electblake/VideoCropper/compare/v2.2.0.0...v2.2.1.0
 [2.2.0]: https://github.com/electblake/VideoCropper/compare/v2.1.0.0...v2.2.0.0

@@ -30,6 +30,7 @@
                 <MenuFlyoutItem Text="Open Crash Reports Folder" Click="OpenCrashReportsFolder_Click"/>
             </MenuBarItem>
             <MenuBarItem Title="Help" AccessKey="H">
+                <MenuFlyoutItem Text="Check for updates" AccessKey="U" Click="CheckForUpdates_Click"/>
                 <MenuFlyoutItem Text="NVIDIA Overlay Instructions..." AccessKey="N" Click="NvidiaOverlayHelp_Click"/>
             </MenuBarItem>
         </MenuBar>

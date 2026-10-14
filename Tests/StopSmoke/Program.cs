@@ -3,6 +3,13 @@ using FileLogger;
 using WinUIShared.Helpers;
 using WinUIShared.Controls;
 
+if (args[0] == "--memory-failure")
+{
+    Console.Error.WriteLine("x265 [error]: malloc of size 3438592 failed");
+    for (var line = 0; line < 40; line++) Console.Error.WriteLine("encoder shutdown " + line);
+    Environment.Exit(-12);
+}
+
 var ffmpeg = Path.GetFullPath(args[0]);
 var nvidia = new GpuInfo("NVIDIA", 0, GpuVendor.Nvidia);
 var intel = new GpuInfo("Intel", 0, GpuVendor.Intel);
@@ -18,6 +25,15 @@ Console.WriteLine("PASS: Auto hardware preference and encoder support filtering.
 var root = Path.Combine(Path.GetTempPath(), "VideoCropper-stop-" + Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(root);
 var processor = new TestProcessor(ffmpeg);
+Check(!await processor.SimulateMemoryFailure(), "Memory exhaustion is unsuccessful");
+Check(processor.MemoryExhausted, "Memory exhaustion is identified");
+Check(processor.LastFailureDetails.Contains("malloc of size 3438592 failed"), "Original memory error survives stderr tail eviction");
+Check(processor.LastFailureDetails.Contains("Exit code: -12"), "Diagnostic includes exit code");
+Check(processor.LastFailureDetails.Contains("Command:"), "Diagnostic includes command");
+Check(!Processor.IsMemoryExhaustion("Unrecognized option 'qsv_device'"), "Other errors are not mislabeled as memory exhaustion");
+Check(Processor.IsMemoryExhaustion("Error submitting a packet to the muxer: Cannot allocate memory"), "NVIDIA muxer memory failure is identified");
+Check(Processor.IsMemoryExhaustion("CUDA_ERROR_OUT_OF_MEMORY"), "GPU memory exhaustion is identified");
+Console.WriteLine("PASS: simulated encoder memory exhaustion returns failure with bounded diagnostics.");
 foreach (var mode in new[] { "stop", "paused-stop", "cancel", "paused-cancel", "resume", "complete" })
 {
     var output = Path.Combine(root, mode + ".mp4");
@@ -42,6 +58,7 @@ foreach (var mode in new[] { "stop", "paused-stop", "cancel", "paused-cancel", "
         continue;
     }
     Check(success, mode + " exits successfully");
+    Check(!processor.MemoryExhausted && processor.LastFailureDetails.Length == 0, "New encoding clears prior failure state");
     Check(processor.StopRequested == !complete, mode + " stop state");
     var decoded = Path.Combine(root, mode + ".gray");
     using var decoder = Process.Start(new ProcessStartInfo(ffmpeg,
@@ -63,6 +80,7 @@ static void Check(bool value, string message)
 
 sealed class TestProcessor(string ffmpeg) : Processor(ffmpeg, new TestLogger())
 {
+    public Task<bool> SimulateMemoryFailure() => StartProcess(Environment.ProcessPath!, "--memory-failure", null, null);
     public TaskCompletionSource FramesWritten { get; private set; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     public Task<bool> Encode(string output, int seconds)

@@ -64,7 +64,10 @@ internal sealed class AppDiagnostics : IFileLogger
             if (File.Exists(settingsPath)) report.WriteLine(File.ReadAllText(settingsPath));
             report.WriteLine("\n--- Application session log ---");
             using var log = File.OpenText(LogPath);
-            report.Write(log.ReadToEnd());
+            var buffer = new char[4096];
+            int count;
+            while ((count = log.Read(buffer, 0, buffer.Length)) != 0)
+                report.Write(buffer, 0, count);
             return reportPath;
         }
     }

@@ -9,6 +9,8 @@ AppPublisherURL=https://github.com/electblake/VideoCropper
 AppSupportURL=https://github.com/electblake/VideoCropper/issues
 AppUpdatesURL=https://github.com/electblake/VideoCropper/releases
 DefaultDirName={autopf}\VideoCropper
+UsePreviousAppDir=yes
+UsePreviousTasks=yes
 DefaultGroupName=Video Cropper
 DisableProgramGroupPage=yes
 InfoBeforeFile=prerequisites.txt
@@ -24,6 +26,8 @@ Compression=lzma2
 SolidCompression=yes
 ArchiveExtraction=enhanced/nopassword
 CloseApplications=yes
+; Restart Manager prompts to close the running app before replacing its files.
+CloseApplicationsFilter=*.*
 RestartApplications=no
 
 [Tasks]

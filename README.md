@@ -133,6 +133,23 @@ Click the **Go back** button to return to the file selection page.
 
 ## Settings and diagnostics
 
+Use **Help → Check for updates** to compare the running version with the latest
+stable GitHub release from `electblake/VideoCropper`. Version comparison supports
+the fork's four-part versions as well as semantic prerelease ordering. The dialog
+shows when the app is up to date. When an update is available, choose **Download
+installer** to download the x64 Setup release asset with percentage progress, then
+**Quit and install new version** to launch Setup and close Video Cropper. Finish
+active crops first. Setup requests Windows administrator permission.
+
+Setup retains the existing installation directory and shortcut choices using its
+stable application ID. Inno Setup's Windows Restart Manager integration checks
+files in use and presents its standard close-app prompt before replacing them.
+The final installer page offers to launch Video Cropper again.
+
+Run `dotnet run --project Tests/UpdatesSmoke -- --live` to check version ordering,
+the real GitHub release lookup, installer download, and the up-to-date result.
+This check downloads and deletes a temporary installer without executing it.
+
 The cropper restores the last rotation, crop position and size, aspect-ratio preset,
 aspect-ratio lock, centering, zoom-into-frame, mouse-wheel zoom, pixel-aspect
 normalization, processing preview, auto-advance, and hardware selection on the next
