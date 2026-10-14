@@ -20,6 +20,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0.17763
 OutputDir={#SetupOutput}
 OutputBaseFilename=VideoCropper_{#AppVersion}_x64_Setup
+SetupIconFile=..\VideoCropper\Assets\EncircledPIERound.ico
 UninstallDisplayIcon={app}\VideoCropper.exe
 WizardStyle=modern
 Compression=lzma2

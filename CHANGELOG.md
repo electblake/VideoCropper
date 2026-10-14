@@ -12,6 +12,14 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 
 ## [Unreleased]
 
+## [2.3.2] - 2026-10-13
+
+### Fixed
+
+- Embedded the app icon in the application and installer executables and included the window icon in installed and portable builds.
+- Loaded the window icon from the application directory so shortcuts and launches from other directories display it correctly.
+- Reused the selected Intel graphics device for QSV decoding and encoding, preventing a second device initialization on the wrong GPU.
+
 ## [2.3.1] - 2026-10-13
 
 ### Added
@@ -169,7 +177,8 @@ The `cert` tag contains installation-certificate instructions and is not a separ
 - Added video preview controls and cropped output beside the source file.
 - Added build, usage, and certificate-installation documentation.
 
-[Unreleased]: https://github.com/electblake/VideoCropper/compare/v2.3.1.0...HEAD
+[Unreleased]: https://github.com/electblake/VideoCropper/compare/v2.3.2.0...HEAD
+[2.3.2]: https://github.com/electblake/VideoCropper/compare/v2.3.1.0...v2.3.2.0
 [2.3.1]: https://github.com/electblake/VideoCropper/compare/v2.3.0.0...v2.3.1.0
 [2.3.0]: https://github.com/electblake/VideoCropper/compare/v2.2.1.0...v2.3.0.0
 [2.2.1]: https://github.com/electblake/VideoCropper/compare/v2.2.0.0...v2.2.1.0

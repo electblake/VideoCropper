@@ -12,7 +12,7 @@
   <Identity
     Name="ba762d62-a6c9-4754-92c4-b78db6390f08"
     Publisher="CN=PIE Softwares"
-    Version="2.3.1.0" />
+    Version="2.3.2.0" />
 
   <mp:PhoneIdentity PhoneProductId="ba762d62-a6c9-4754-92c4-b78db6390f08" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

@@ -55,7 +55,7 @@ namespace VideoCropper
                 AppWindow.Resize(new SizeInt32(1800, AppWindow.Size.Height));
             }
 
-            AppWindow.SetTitleBarIcon("Assets/EncircledPIERound.ico");
+            AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "EncircledPIERound.ico"));
             WindowFrame.Navigate(typeof(MainPage));
             AppWindow.Closing += MainWindow_Closing;
             resizeSettingsTimer.Tick += (_, _) =>
